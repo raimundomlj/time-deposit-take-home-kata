@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Unit tests" type="JUnit" factoryName="JUnit">
+    <module name="time-deposit-kata-kotlin" />
+    <option name="TEST_OBJECT" value="directory" />
+    <dir value="$PROJECT_DIR$/src/test/kotlin" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

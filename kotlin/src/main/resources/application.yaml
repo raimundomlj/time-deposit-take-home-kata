@@ -1,0 +1,15 @@
+spring:
+  servlet:
+    multipart:
+      # Let the balance-update endpoint inspect the body before any multipart parsing.
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:55432/time_deposits
+    username: postgres
+  autoconfigure:
+    # Keep the HTTP API limited to the two time-deposit operations.
+    exclude: org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: DEBUG

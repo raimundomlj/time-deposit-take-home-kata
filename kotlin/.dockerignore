@@ -1,0 +1,7 @@
+*
+!pom.xml
+!openapi.yaml
+!src/
+!src/**
+!examples/
+!examples/deposits.sql

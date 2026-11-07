@@ -1,5 +1,13 @@
 # Time Deposit Refactoring Kata - Take-Home Assignment
 
+## Submitted solution
+
+The implementation for this assignment is in the [kotlin](kotlin/) directory, using Kotlin, Spring Boot and PostgreSQL.
+
+Start with the [Kotlin README](kotlin/README.md) to run the application with Docker Compose or Maven, execute the unit and integration tests, and try both endpoints through Swagger UI. It also explains the architecture, interest calculation and rounding decisions, and how AI assisted the development.
+
+The original assignment follows below.
+
 ## XA Bank Time Deposit
 
 ### Context

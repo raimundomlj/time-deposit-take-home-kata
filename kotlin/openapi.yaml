@@ -1,0 +1,123 @@
+openapi: 3.0.3
+info:
+  title: Time Deposit API
+  version: 1.0.0
+  description: |
+    Load the sample data from `examples/deposits.sql` as described in the Kotlin README.
+    Execute GET to see the deposits, POST once to apply monthly interest, then GET again to compare balances.
+servers:
+  - url: /
+paths:
+  /time-deposits:
+    get:
+      tags: [TimeDeposits]
+      operationId: listTimeDeposits
+      summary: List deposits with their withdrawal history
+      description: Deposits are ordered by ID. Withdrawals are ordered by date, then by ID.
+      responses:
+        '200':
+          description: All deposits, or an empty array when the database is empty.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeDeposit'
+              example:
+                - id: 1
+                  planType: basic
+                  balance: 18.00
+                  days: 31
+                  withdrawals:
+                    - { id: 1, amount: 7.50, date: '2025-01-01' }
+                - id: 2
+                  planType: student
+                  balance: 1200.00
+                  days: 366
+                  withdrawals: []
+        '406':
+          description: The Accept header excludes application/json, the representation used for the deposit list.
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+  /time-deposits/update-balances:
+    post:
+      tags: [TimeDeposits]
+      operationId: updateTimeDepositBalances
+      summary: Apply one month of interest to all eligible deposits
+      description: |
+        Send an empty request to credit all eligible deposits in a single transaction.
+        With the sample data, the first update takes the Basic balance from 18.00 to 18.01.
+        The Student deposit is past day 365 and stays at 1200.00.
+      responses:
+        '204':
+          description: The update committed successfully. An empty batch also succeeds.
+        '400':
+          description: The request contained a body. No balances were updated.
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+components:
+  schemas:
+    TimeDeposit:
+      type: object
+      required: [id, planType, balance, days, withdrawals]
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+        planType:
+          type: string
+          example: basic
+        balance:
+          type: number
+          example: 18.01
+        days:
+          type: integer
+          format: int32
+          example: 31
+        withdrawals:
+          type: array
+          description: An empty array when the deposit has no withdrawals.
+          items:
+            $ref: '#/components/schemas/Withdrawal'
+    Withdrawal:
+      type: object
+      required: [id, amount, date]
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 5
+        amount:
+          type: number
+          example: 7.50
+        date:
+          type: string
+          format: date
+          example: '2025-01-01'
+    DatabaseProblem:
+      type: object
+      required: [title, status, detail]
+      properties:
+        type:
+          type: string
+          example: about:blank
+        title:
+          type: string
+          example: Internal Server Error
+        status:
+          type: integer
+          enum: [500]
+        detail:
+          type: string
+          example: The database operation could not be completed.
+        instance:
+          type: string
+          example: /time-deposits/update-balances
+  responses:
+    DatabaseError:
+      description: The database operation failed. Any balance updates in this request were rolled back.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/DatabaseProblem'
